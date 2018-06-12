@@ -9,8 +9,8 @@ function curl($url) {
 		CURLOPT_CONNECTTIMEOUT => 0,
 		CURLOPT_SSL_VERIFYHOST => false,
 		CURLOPT_SSL_VERIFYPEER => false,
-		CURLOPT_FOLLOWLOCATION => true,
-		CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'
+		CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+		CURLOPT_FOLLOWLOCATION => true
 	));
 	$result = curl_exec($ch);
 	curl_close($ch);
@@ -21,17 +21,22 @@ function explode_by($begin, $end, $data) {
 	$data = explode($end, $data[1]);
 	return $data[0];
 }
-function fb_direct_video($url) {
+function getlink($url) {
 	$source = curl($url);
-	$list['sd'] = explode_by('sd_src_no_ratelimit:"', '"', $source);
-	$list['hd'] = explode_by('hd_src_no_ratelimit:"', '"', $source);
-	return $list;
+	$sd = explode_by('sd_src_no_ratelimit:"', '"', $source);
+	$hd = explode_by('hd_src_no_ratelimit:"', '"', $source);
+	$i = 0;
+	if ($sd) {
+		$video[$i]['quality'] = 'SD';
+		$video[$i]['src'] = $sd;
+		++$i;
+	}
+	if ($hd) {
+		$video[$i]['quality'] = 'HD';
+		$video[$i]['src'] = $hd;
+	}
+	return $video;
 }
 $url = isset($_GET['url']) ? $_GET['url'] : null;
-if ($url) {
-	$list = fb_direct_video($url);
-	if ($list['sd'])
-		echo '<b>SD</b>: <a href="' . $list['sd'] . '">' . $list['sd'] . '</a><br><br>';
-	if ($list['hd'])
-		echo '<b>HD</b>: <a href="' . $list['hd'] . '">' . $list['hd'] . '</a>';
-}
+if ($url)
+	echo json_encode(getlink($url));

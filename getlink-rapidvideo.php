@@ -38,6 +38,5 @@ $url = isset($_GET['url']) ? $_GET['url'] : null;
 if ($url) {
 	$code = get_code($url);
 	$api = '6272cc3581b25e86937b2e57b925827f8ddd5a48db07013519f1223f50939b7e';
-	$quality = getlink($code, $api, $url);
 	echo json_encode(getlink($code, $api, $url));
 }

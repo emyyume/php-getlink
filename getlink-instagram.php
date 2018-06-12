@@ -23,13 +23,14 @@ function getlink($url) {
 	$source = curl($url);
 	$is_video = explode_by('is_video":', ',', $source);
 	if ($is_video === 'true') {
-		$source = explode_by('video_url":"', '"', $source);
-		return '<video controls><source src="' . $source . '" type="video/mp4">Your browser doesn\'t support HTML5 video.</video>';
+		$video = explode_by('video_url":"', '"', $source);
+		return '<video controls><source src="' . $video . '" type="video/mp4">Your browser doesn\'t support HTML5 video.</video>';
 	} else {
 		$json = explode_by('display_resources":', ',"is_video', $source);
-		$quality = json_decode($json);
-		return '<img src="' . $quality[2]->src . '">';
+		$image = json_decode($json);
+		return '<a href="' . $image[2]->src . '"><img src="' . $image[2]->src . '"></a>';
 	}
 }
 $url = isset($_GET['url']) ? $_GET['url'] : null;
-echo getlink($url);
+if ($url)
+	echo getlink($url);
