@@ -21,9 +21,13 @@ function explode_by($begin, $end, $data) {
 }
 function getlink($url) {
 	$source = curl($url);
+	$i = 0;
 	$video = array();
-	$video['low'] = explode_by('setVideoUrlLow(\'', '\'', $source);
-	$video['high'] = explode_by('setVideoUrlHigh(\'', '\'', $source);
+	$video[$i]['quality'] = 'SD';
+	$video[$i]['src'] = explode_by('setVideoUrlLow(\'', '\'', $source);
+	++$i;
+	$video[$i]['quality'] = 'HD';
+	$video[$i]['src'] = explode_by('setVideoUrlHigh(\'', '\'', $source);
 	return $video;
 }
 $url = isset($_GET['url']) ? $_GET['url'] : null;

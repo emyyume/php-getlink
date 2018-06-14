@@ -24,6 +24,7 @@ function explode_by($begin, $end, $data) {
 function getlink($url) {
 	$source = curl($url);
 	$json = json_decode(explode_by('mediaDefinitions":', ',"video_unavailable_country', $source));
+	$video = array();
 	for ($i = 0; $i < count($json); ++$i) {
 		if ($json[$i]->videoUrl === '')
 			array_shift($json);

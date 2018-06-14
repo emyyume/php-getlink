@@ -26,6 +26,7 @@ function getlink($url) {
 	$sd = explode_by('sd_src_no_ratelimit:"', '"', $source);
 	$hd = explode_by('hd_src_no_ratelimit:"', '"', $source);
 	$i = 0;
+	$video = array();
 	if ($sd) {
 		$video[$i]['quality'] = 'SD';
 		$video[$i]['src'] = $sd;
