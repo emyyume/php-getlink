@@ -13,7 +13,7 @@ curl_setopt_array($ch, array(
 ));
 $result = curl_exec($ch);
 curl_close($ch);
-preg_match("<source src='(.*)' type=\"(.*)\" />", $result, $matches);
+preg_match("/<source src='(.*)' type=\"(.*)\" />/", $result, $matches);
 $video = array(
 	'src' => $matches[1],
 	'type' => $matches[2]
