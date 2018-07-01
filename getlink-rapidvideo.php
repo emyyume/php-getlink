@@ -1,5 +1,4 @@
 <?php
-//Developed by Emy Yume
 function curl($url) {
 	$ch = curl_init();
 	curl_setopt_array($ch, array(
@@ -15,24 +14,31 @@ function curl($url) {
 	return $result;
 }
 function get_code($url) {
+	if (strpos($url, '/e/'))
+		$url = str_replace('/e/', '/v/', $url);
 	$code = explode('/v/', $url);
 	return $code[1];
 }
 function getlink($url, $code, $api) {
-	$check_status = 'https://api.rapidvideo.com/v1/objects.php?ac=info&code=' . $code . '&apikey=' . $api;
+	$check_status = 'https://api.rapidvideo.com/v1/objects.php?ac=info&code=' . urlencode($code) . '&apikey=' . urlencode($api);
 	$result = json_decode(curl($check_status));
 	$video = array();
 	if ($result->result->$code->status === 200) {
 		$source = curl($url . '&q=1080');
 		preg_match_all('#<source src="(.*)" type="(.*)" title="(.*)" data-res="(.*)" />#', $source, $list);
-		for ($i = 0; $i < count($list[3]); ++$i) {
-			$video[$i]['quality'] = $list[3][$i];
-			$video[$i]['src'] = $list[1][$i];
-		}
+		/*for ($i = 0; $i < count($list[3]); ++$i) {
+			$video[$i]['file'] = $list[1][$i];
+			$video[$i]['label'] = $list[3][$i];
+			$video[$i]['type'] = $list[2][$i];
+		}*/
+		$max_quality = count($list[3]) - 1;
+		$video[0]['file'] = $list[1][$max_quality];
+		$video[0]['label'] = $list[3][$max_quality];
+		$video[0]['type'] = $list[2][$max_quality];
+		$video[0]['default'] = 'true';
 		return $video;
 	} else {
-		echo '404: File not found (e.g. deleted video or wrong URL)';
-		return null;
+		die('404: File not found (e.g. deleted video or wrong URL)');
 	}
 }
 $url = isset($_GET['url']) ? $_GET['url'] : null;
