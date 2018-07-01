@@ -21,19 +21,16 @@ function explode_by($begin, $end, $data) {
 }
 $url = trim(stripslashes(htmlspecialchars($_GET['url'])));
 if (!$url) die();
-if (strpos($url, "embed")) {
-	$id = explode("embed/", $url);
-	$url = "https://vidcloud.co/v/" . $id[1];
-}
+if (!strpos($url, "embed/")) die("Please use embed link.");
 $result = curl($url);
 $ajax = explode_by("url: '/player", "'", $result);
-$url_player = "https://vidcloud.co/player" . $ajax;
+$url_player = "https://vcstream.to/player" . $ajax;
 $json = json_decode(curl($url_player));
 if ($json->status == 1) {
 	$source = html_entity_decode($json->html);
 	$json = json_decode(explode_by("sources: ", "\n", $source));
 	$link = array(
-		'src' => $json[0]->src,
+		'file' => $json[0]->src,
 		'type' => $json[0]->type,
 		'label' => $json[0]->label
 	);
